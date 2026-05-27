@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="My Study"/>
+<title>My Study App</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --p:#6C63FF;--p-light:#EEF0FF;--p-dark:#4B44CC;
+  --g:#10B981;--g-light:#ECFDF5;
+  --o:#F59E0B;--o-light:#FFFBEB;
+  --r:#EF4444;--r-light:#FEF2F2;
+  --bg:#F7F8FC;--surface:#FFFFFF;
+  --border:#EAECF4;--border2:#D6D9EC;
+  --txt:#0F1123;--txt2:#6B7194;--txt3:#A8ABBC;
+  --nav-bg:#0F1123;
+  --shadow-sm:0 1px 3px rgba(15,17,35,.06),0 1px 2px rgba(15,17,35,.04);
+  --shadow:0 4px 16px rgba(108,99,255,.10),0 1px 4px rgba(15,17,35,.06);
+  --shadow-lg:0 12px 40px rgba(108,99,255,.15),0 4px 12px rgba(15,17,35,.08);
+  --radius-sm:10px;--radius:16px;--radius-lg:22px;
+}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--txt);max-width:480px;margin:0 auto;min-height:100vh;}
+
+/* ── TYPOGRAPHY ── */
+.t-hero{font-size:26px;font-weight:900;letter-spacing:-.5px;line-height:1.2;}
+.t-title{font-size:20px;font-weight:800;letter-spacing:-.3px;}
+.t-h2{font-size:16px;font-weight:700;letter-spacing:-.2px;}
+.t-h3{font-size:14px;font-weight:600;}
+.t-body{font-size:13px;font-weight:500;line-height:1.6;}
+.t-caption{font-size:11px;font-weight:500;color:var(--txt2);}
+.t-label{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--txt3);}
+
+/* ── INPUTS ── */
+input,select,textarea{font-family:'Inter',-apple-system,sans-serif;font-size:14px;font-weight:500;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;width:100%;background:var(--surface);color:var(--txt);outline:none;transition:border-color .2s,box-shadow .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(108,99,255,.12);}
+textarea{resize:none;line-height:1.6;}
+
+/* ── BUTTONS ── */
+button{font-family:'Inter',-apple-system,sans-serif;cursor:pointer;border:none;border-radius:var(--radius-sm);font-weight:600;transition:all .18s;letter-spacing:-.1px;}
+button:active{transform:scale(.97);}
+.btn-p{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;padding:12px 20px;font-size:14px;box-shadow:0 4px 14px rgba(108,99,255,.35);}
+.btn-p:hover{box-shadow:0 6px 20px rgba(108,99,255,.45);}
+.btn-ghost{background:var(--surface);border:1.5px solid var(--border);color:var(--txt2);padding:11px 16px;font-size:13px;}
+.btn-sm{padding:6px 13px;font-size:12px;border-radius:8px;}
+.btn-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--p-light);color:var(--p);border:none;flex-shrink:0;}
+.btn-danger{background:var(--r-light);color:var(--r);font-size:11px;padding:5px 10px;border-radius:7px;font-weight:600;}
+
+/* ── LAYOUT ── */
+.app{display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--nav-bg);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-logo{color:#fff;font-size:16px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:9px;}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--p);box-shadow:0 0 8px var(--p);}
+.topbar-cert{color:#6B7494;font-size:12px;font-weight:500;background:#1C1F36;padding:5px 12px;border-radius:20px;}
+.main{flex:1;padding:0 0 84px;}
+
+/* ── NAV ── */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--nav-bg);display:flex;padding:8px 4px 22px;z-index:100;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;color:#4B4F6A;padding:5px 2px;font-size:9px;font-weight:600;letter-spacing:.2px;}
+.nav-btn.on{color:#fff;}
+.nav-icon{font-size:20px;line-height:1;transition:transform .2s;}
+.nav-btn.on .nav-icon{transform:scale(1.15);}
+.nav-pip{width:4px;height:4px;border-radius:2px;background:var(--p);margin:0 auto;opacity:0;transition:opacity .2s;}
+.nav-btn.on .nav-pip{opacity:1;}
+
+/* ── PAGE ── */
+.page-hd{padding:22px 18px 4px;}
+.page-hd-row{display:flex;align-items:center;justify-content:space-between;}
+.sec{padding:14px 16px 0;}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:var(--shadow-sm);}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-size:14px;font-weight:700;letter-spacing:-.1px;}
+
+/* ── CHIPS ── */
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;margin-bottom:14px;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;font-size:12px;padding:7px 15px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--txt2);font-weight:600;cursor:pointer;transition:all .18s;box-shadow:var(--shadow-sm);}
+.chip.on{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(108,99,255,.3);}
+
+/* ── HTABS ── */
+.htabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none;}
+.htabs::-webkit-scrollbar{display:none;}
+.htab{flex-shrink:0;padding:10px 18px;font-size:13px;font-weight:600;color:var(--txt2);border:none;background:transparent;border-bottom:2.5px solid transparent;margin-bottom:-2px;cursor:pointer;transition:all .18s;}
+.htab.on{color:var(--p);border-bottom-color:var(--p);}
+
+/* ── BADGE ── */
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:700;display:inline-block;letter-spacing:.1px;}
+.bp{background:var(--p-light);color:var(--p-dark);}
+.bg{background:var(--g-light);color:#065F46;}
+.bo{background:var(--o-light);color:#92400E;}
+.br{background:var(--r-light);color:#991B1B;}
+
+/* ── PROGRESS ── */
+.prog{height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+
+/* ── CHECKBOX ── */
+.cb{width:22px;height:22px;border-radius:7px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s;background:var(--surface);}
+.cb.on{background:linear-gradient(135deg,var(--g),#059669);border-color:transparent;box-shadow:0 2px 8px rgba(16,185,129,.3);}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 10px;text-align:center;box-shadow:var(--shadow-sm);}
+.stat-n{font-size:24px;font-weight:800;letter-spacing:-.5px;}
+.stat-l{font-size:10px;color:var(--txt2);margin-top:3px;font-weight:600;letter-spacing:.2px;}
+
+/* ── ITEM ROW ── */
+.item-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.item-row:last-child{border-bottom:none;padding-bottom:0;}
+
+/* ── MEMO CARD ── */
+.mc{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:9px;cursor:pointer;transition:all .2s;}
+.mc.open{background:var(--g-light);border-color:#6EE7B7;}
+.mc:active{transform:scale(.99);}
+
+/* ── SPLIT PANEL ── */
+.split{display:grid;grid-template-columns:100px 1fr;gap:10px;margin-bottom:12px;}
+.split-img{background:linear-gradient(135deg,#1C1F36,#0F1123);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;cursor:pointer;min-height:130px;position:relative;overflow:hidden;}
+.split-img::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(108,99,255,.3),transparent 60%);}
+.split-right{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-sm);cursor:pointer;}
+
+/* ── CAT TAG ── */
+.ct{font-size:10px;padding:3px 9px;border-radius:6px;font-weight:700;display:inline-block;letter-spacing:.1px;}
+.cc0{background:#EEF0FF;color:#3730A3;} .cc1{background:#ECFDF5;color:#065F46;} .cc2{background:#FFFBEB;color:#92400E;} .cc3{background:#FAF5FF;color:#6B21A8;} .cc4{background:#ECFEFF;color:#155E75;} .cc5{background:#FEF3C7;color:#92400E;}
+
+/* ── DDAY ── */
+.dday{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;border-radius:var(--radius-sm);padding:8px 16px;text-align:center;flex-shrink:0;box-shadow:0 4px 14px rgba(108,99,255,.35);}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(10,12,30,.6);z-index:200;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+.modal{background:var(--surface);border-radius:24px 24px 0 0;padding:28px 20px 40px;width:100%;max-width:480px;max-height:91vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+.modal-hd{font-size:18px;font-weight:800;margin-bottom:18px;letter-spacing:-.3px;}
+.modal-drag{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px;}
+.field-lbl{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;margin-top:14px;}
+
+/* ── CALENDAR ── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-daylbl{text-align:center;font-size:10px;color:var(--txt3);font-weight:700;padding:5px 0;letter-spacing:.3px;}
+.cal-cell{text-align:center;padding:7px 2px;border-radius:9px;font-size:13px;cursor:pointer;position:relative;font-weight:500;transition:background .15s;}
+.cal-cell.today{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;font-weight:800;box-shadow:0 2px 8px rgba(108,99,255,.4);}
+.cal-cell.sel{background:var(--p-light);color:var(--p);font-weight:700;}
+.cal-cell.has::after{content:'';width:4px;height:4px;background:var(--o);border-radius:50%;position:absolute;bottom:2px;left:50%;transform:translateX(-50%);}
+.cal-cell:active:not(.today){background:var(--border);}
+
+/* ── KP ── */
+.kp-card{background:var(--p-light);border-radius:var(--radius-sm);padding:11px 13px;display:flex;gap:10px;margin-bottom:8px;}
+.kp-num{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;font-size:10px;border-radius:5px;padding:2px 7px;font-weight:800;flex-shrink:0;margin-top:2px;}
+
+/* ── BANNER ── */
+.banner{background:linear-gradient(135deg,#1C1F36 0%,#0F1123 100%);border-radius:var(--radius);padding:20px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);}
+.banner::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(108,99,255,.4),transparent 70%);}
+.banner::after{content:'';position:absolute;bottom:-20px;left:20px;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.2),transparent 70%);}
+
+/* ── LOADING ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.spin{display:inline-block;animation:spin .8s linear infinite;}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 20px;gap:18px;text-align:center;}
+
+/* ── BACK ── */
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--txt2);background:none;border:none;padding:0;margin-bottom:14px;font-weight:600;cursor:pointer;}
+
+/* ── CIRCLE PROGRESS ── */
+.cprog{position:relative;flex-shrink:0;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-dot"></div>
+      My Study
+    </div>
+    <div id="topCert" class="topbar-cert">자격증 선택</div>
+  </div>
+  <div class="main" id="main"></div>
+  <nav class="nav" id="nav"></nav>
+  <div id="mw"></div>
+</div>
+
+<script>
+const CLIST=["정보처리기사","정보보안기사","컴퓨터활용능력 1급","SQLD","네트워크관리사","한국사능력검정","기타"];
+const CC=["cc0","cc1","cc2","cc3","cc4","cc5"];
+let S={tab:0,certs:[],selCert:null,plans:[],notes:[],calEvents:{},modal:null,editTarget:null,selDate:null,calYear:new Date().getFullYear(),calMonth:new Date().getMonth(),noteView:"list",selNote:null,noteTab:"note",memoCat:"전체",memoOpen:{},_cn:"",_cc:"",_cd:"",loading:false,loadMsg:""};
+
+function td(){const d=new Date();return`${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;}
+function p2(n){return String(n).padStart(2,"0");}
+function fd(s){if(!s)return"";const[y,m,d]=s.split("-");return`${y}년 ${+m}월 ${+d}일`;}
+function dday(s){if(!s)return null;const diff=Math.ceil((new Date(s)-new Date())/86400000);return diff>0?`D-${diff}`:diff===0?"D-Day!":`D+${Math.abs(diff)}`;}
+
+function save(){try{localStorage.setItem("msa3",JSON.stringify({certs:S.certs,plans:S.plans,notes:S.notes,calEvents:S.calEvents,selCert:S.selCert}));}catch(e){}}
+function load(){try{const d=localStorage.getItem("msa3");if(d){const p=JSON.parse(d);Object.assign(S,{certs:p.certs||[],plans:p.plans||[],notes:p.notes||[],calEvents:p.calEvents||{},selCert:p.selCert||null});}}catch(e){}}
+load();
+
+function r(){
+  const cert=S.certs.find(c=>c.id===S.selCert);
+  document.getElementById("topCert").textContent=cert?cert.name:"자격증 선택";
+  document.getElementById("main").innerHTML=S.loading?loading():page();
+  document.getElementById("nav").innerHTML=nav();
+  document.getElementById("mw").innerHTML=S.modal?modal():"";
+  bind();
+}
+
+const NI=[["🏠","홈"],["📋","계획"],["✅","실천"],["🎯","목표"],["🧠","암기장"],["📅","달력"]];
+function nav(){return NI.map(([ic,lb],i)=>`<button class="nav-btn${S.tab===i?" on":""}" data-tab="${i}"><span class="nav-icon">${ic}</span><span>${lb}</span><div class="nav-pip"></div></button>`).join("");}
+
+function page(){switch(S.tab){case 0:return home();case 1:return plan();case 2:return practice();case 3:return goal();case 4:return memo();case 5:return cal();}}
+
+function loading(){return`<div class="loading-wrap"><div style="width:76px;height:76px;background:var(--p-light);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:var(--shadow)"><span class="spin">⚙️</span></div><div><p style="font-size:17px;font-weight:800;letter-spacing:-.3px">${S.loadMsg}</p><p style="font-size:13px;color:var(--txt2);margin-top:4px">잠시만 기다려 주세요</p></div></div>`;}
+
+function chips(showAdd=false){
+  if(!S.certs.length)return`<div class="card" style="text-align:center;padding:28px"><div style="font-size:44px;margin-bottom:12px">🎓</div><p class="t-body" style="color:var(--txt2);margin-bottom:14px">자격증을 먼저 추가해주세요</p><button class="btn-p btn-sm" data-action="openCert">＋ 자격증 추가</button></div>`;
+  return`<div class="chips">${S.certs.map(c=>`<button class="chip${S.selCert===c.id?" on":""}" data-selcert="${c.id}">${c.name}</button>`).join("")}${showAdd?`<button class="chip" data-action="openCert">＋</button>`:""}</div>`;}
+
+// ── HOME ────────────────────────────────────
+function home(){
+  const cert=S.certs.find(c=>c.id===S.selCert);
+  const cn=S.notes.filter(n=>n.certId===S.selCert);
+  const cp=S.plans.filter(p=>p.certId===S.selCert);
+  const allT=cp.flatMap(p=>p.tasks||[]),doneT=allT.filter(t=>t.done).length;
+  const allG=cp.flatMap(p=>p.goals||[]),doneG=allG.filter(g=>g.done).length;
+  const pct=allT.length?Math.round(doneT/allT.length*100):0;
+  const dd=cert?dday(cert.examDate):null;
+  const C=2*Math.PI*30,off=C*(1-pct/100);
+  return`<div class="page-hd"><div class="page-hd-row"><div><p class="t-label">Dashboard</p><p class="t-title" style="margin-top:4px">안녕하세요 👋</p></div><button class="btn-p btn-sm" data-action="openCert">＋ 자격증</button></div></div>
+  <div class="sec">
+    ${chips()}
+    ${!cert?"":`
+    <div class="banner">
+      <div style="position:relative;z-index:1;display:flex;align-items:center;gap:14px">
+        <div style="font-size:40px">🎓</div>
+        <div style="flex:1;min-width:0">
+          <p style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px">${cert.name}</p>
+          ${cert.examDate?`<p style="font-size:12px;color:#8890C0;margin-top:3px">📅 ${fd(cert.examDate)}</p>`:""}
+        </div>
+        ${dd?`<div class="dday"><p style="font-size:9px;opacity:.7;font-weight:600;letter-spacing:.3px">시험까지</p><p style="font-size:22px;font-weight:900;letter-spacing:-.5px">${dd}</p></div>`:""}
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n" style="color:var(--p)">${cn.length}</div><div class="stat-l">공부 노트</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--g)">${doneT}/${allT.length}</div><div class="stat-l">실천 완료</div></div>
+      <div class="stat"><div class="stat-n" style="color:var(--o)">${doneG}/${allG.length}</div><div class="stat-l">목표 달성</div></div>
+    </div>
+    <div class="card" style="display:flex;align-items:center;gap:16px">
+      <svg width="76" height="76" style="flex-shrink:0"><circle cx="38" cy="38" r="30" fill="none" stroke="var(--p-light)" stroke-width="7"/><circle cx="38" cy="38" r="30" fill="none" stroke="${pct===100?"var(--g)":"var(--p)"}" stroke-width="7" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round" transform="rotate(-90 38 38)"/><text x="38" y="43" text-anchor="middle" font-size="14" font-weight="800" fill="var(--txt)" font-family="Inter,sans-serif">${pct}%</text></svg>
+      <div style="flex:1"><p class="t-h3" style="margin-bottom:8px">전체 실천 진행률</p><div class="prog"><div class="prog-fill" style="width:${pct}%;background:${pct===100?"linear-gradient(90deg,var(--g),#059669)":"linear-gradient(90deg,var(--p),var(--p-dark))"}"></div></div><p class="t-caption" style="margin-top:7px">할 일 ${doneT}개 완료 · 목표 ${doneG}개 달성</p></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><p class="card-title">📋 오늘의 계획</p><span class="t-caption">${fd(td())}</span></div>
+      ${(()=>{const tp=cp.find(p=>p.date===td());if(!tp||!tp.tasks?.length)return`<p class="t-body" style="color:var(--txt2);padding:4px 0">오늘 계획이 없어요. 계획 탭에서 추가하세요!</p>`;
+      return tp.tasks.map(t=>`<div class="item-row"><div class="cb${t.done?" on":""}" data-todotask="${tp.id}_${t.id}">${t.done?`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`:""}</div><div style="flex:1"><p class="t-h3" style="text-decoration:${t.done?"line-through":"none"};color:${t.done?"var(--txt2)":"var(--txt)"}">${t.text}</p>${t.amount?`<p class="t-caption" style="margin-top:2px">📏 ${t.amount}</p>`:""}</div></div>`).join("");})()}
+    </div>
+    <div class="card">
+      <div class="card-hd"><p class="card-title">📝 최근 노트</p></div>
+      ${cn.length===0?`<p class="t-body" style="color:var(--txt2);padding:4px 0">암기장 탭에서 사진을 업로드해보세요!</p>`:
+      cn.slice(-3).reverse().map(n=>`<div class="item-row"><div style="width:38px;height:38px;background:var(--p-light);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">📝</div><div style="flex:1;min-width:0"><p class="t-h3" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.title}</p><p class="t-caption" style="margin-top:2px">${n.date} · ${n.category||"기타"} · 카드 ${n.memo?.length||0}개</p></div></div>`).join("")}
+    </div>`}
+  </div>`;}
+
+// ── PLAN ────────────────────────────────────
+function plan(){
+  const cp=S.plans.filter(p=>p.certId===S.selCert).sort((a,b)=>b.date.localeCompare(a.date));
+  return`<div class="page-hd"><div class="page-hd-row"><div><p class="t-label">Planning</p><p class="t-title" style="margin-top:4px">학습 계획</p></div><button class="btn-p btn-sm" data-action="openPlan">＋ 계획 추가</button></div></div>
+  <div class="sec">
+    ${chips(true)}
+    ${!S.selCert?"":cp.length===0?`<div class="card" style="text-align:center;padding:32px"><div style="font-size:44px;margin-bottom:12px">📋</div><p class="t-body" style="color:var(--txt2);margin-bottom:14px">아직 계획이 없어요</p><button class="btn-p btn-sm" data-action="openPlan">첫 계획 만들기</button></div>`:
+    cp.map(p=>{const done=p.tasks?.filter(t=>t.done).length||0,total=p.tasks?.length||0,pct=total?Math.round(done/total*100):0;
+    return`<div class="card"><div class="card-hd"><div><p class="card-title">${fd(p.date)}</p>${total?`<p class="t-caption" style="margin-top:3px">${done}/${total} 완료 (${pct}%)</p>`:""}</div><div style="display:flex;gap:7px"><button class="btn-sm bp" data-editplan="${p.id}">수정</button><button class="btn-danger" data-delplan="${p.id}">삭제</button></div></div>
+    ${total?`<div class="prog" style="margin-bottom:14px"><div class="prog-fill" style="width:${pct}%;background:${pct===100?"linear-gradient(90deg,var(--g),#059669)":"linear-gradient(90deg,var(--p),var(--p-dark))"}"></div></div>`:""}
+    ${p.tasks?.map(t=>`<div class="item-row"><div class="cb${t.done?" on":""}" data-checktask="${p.id}_${t.id}">${t.done?`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`:""}</div><div style="flex:1"><p class="t-h3" style="text-decoration:${t.done?"line-through":"none"};color:${t.done?"var(--txt2)":"var(--txt)"}">${t.text}</p>${t.amount?`<span class="badge bp" style="margin-top:3px;display:inline-block">${t.amount}</span>`:""}</div></div>`).join("")||""}
+    ${p.goals?.length?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><p class="t-label" style="margin-bottom:8px">🎯 목표</p>${p.goals.map(g=>`<div class="item-row"><div class="cb${g.done?" on":""}" data-checkgoal="${p.id}_${g.id}">${g.done?`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`:""}</div><p class="t-h3" style="text-decoration:${g.done?"line-through":"none"};color:${g.done?"var(--txt2)":"var(--txt)"}">${g.text}</p></div>`).join("")}</div>`:""}
+    </div>`;}).join("")}
+  </div>`;}
+
+// ── PRACTICE ────────────────────────────────
+function practice(){
+  const cp=S.plans.filter(p=>p.certId===S.selCert).sort((a,b)=>b.date.localeCompare(a.date));
+  const allT=cp.flatMap(p=>p.tasks||[]),done=allT.filter(t=>t.done).length,pct=allT.length?Math.round(done/allT.length*100):0;
+  return`<div class="page-hd"><div class="page-hd-row"><div><p class="t-label">Practice</p><p class="t-title" style="margin-top:4px">실천 체크</p></div>${allT.length?`<span class="badge ${pct===100?"bg":"bp"}">${pct}%</span>`:""}</div></div>
+  <div class="sec">
+    ${chips(true)}
+    ${!S.selCert?"":cp.length===0?`<div class="card" style="text-align:center;padding:28px"><p class="t-body" style="color:var(--txt2)">계획 탭에서 계획을 먼저 만들어주세요</p></div>`:
+    cp.map(p=>{if(!p.tasks?.length)return"";const d=p.tasks.filter(t=>t.done).length,t=p.tasks.length,pct=Math.round(d/t*100);
+    return`<div class="card"><div class="card-hd"><p class="card-title">${fd(p.date)}</p><span class="badge ${pct===100?"bg":"bp"}">${pct===100?"🎉 완료":pct+"%"}</span></div>
+    <div class="prog" style="margin-bottom:14px"><div class="prog-fill" style="width:${pct}%;background:${pct===100?"linear-gradient(90deg,var(--g),#059669)":"linear-gradient(90deg,var(--p),var(--p-dark))"}"></div></div>
+    ${p.tasks.map(t=>`<div class="item-row"><div class="cb${t.done?" on":""}" data-checktask="${p.id}_${t.id}">${t.done?`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`:""}</div><div style="flex:1"><p class="t-h3" style="text-decoration:${t.done?"line-through":"none"};color:${t.done?"var(--txt2)":"var(--txt)"}">${t.text}</p>${t.amount?`<p class="t-caption" style="margin-top:2px">📏 ${t.amount}</p>`:""}</div><span style="font-size:18px">${t.done?"✅":"⬜"}</span></div>`).join("")}
+    </div>`;}).join("")}
+  </div>`;}
+
+// ── GOAL ────────────────────────────────────
+function goal(){
+  const cp=S.plans.filter(p=>p.certId===S.selCert).sort((a,b)=>b.date.localeCompare(a.date));
+  const allG=cp.flatMap(p=>p.goals||[]),done=allG.filter(g=>g.done).length,pct=allG.length?Math.round(done/allG.length*100):0;
+  return`<div class="page-hd"><div class="page-hd-row"><div><p class="t-label">Goals</p><p class="t-title" style="margin-top:4px">목표 달성</p></div>${allG.length?`<span class="badge ${done===allG.length?"bg":"bo"}">${done}/${allG.length}</span>`:""}</div></div>
+  <div class="sec">
+    ${chips(true)}
+    ${!S.selCert?"":cp.length===0?`<div class="card" style="text-align:center;padding:28px"><p class="t-body" style="color:var(--txt2)">계획 탭에서 목표를 먼저 설정해주세요</p></div>`:
+    `${allG.length?`<div class="card" style="display:flex;align-items:center;gap:16px"><div style="font-size:42px">${done===allG.length&&allG.length?"🏆":"🎯"}</div><div style="flex:1"><p class="t-h3" style="margin-bottom:8px">${done===allG.length&&allG.length?"모든 목표 달성!":"목표 달성 현황"}</p><div class="prog"><div class="prog-fill" style="width:${pct}%;background:${done===allG.length?"linear-gradient(90deg,var(--g),#059669)":"linear-gradient(90deg,var(--o),#D97706)"}"></div></div><p class="t-caption" style="margin-top:7px">${done}개 달성 / 전체 ${allG.length}개</p></div></div>`:""}
+    ${cp.map(p=>{if(!p.goals?.length)return"";return`<div class="card"><p class="card-title" style="margin-bottom:12px">${fd(p.date)}</p>${p.goals.map(g=>`<div class="item-row"><div class="cb${g.done?" on":""}" data-checkgoal="${p.id}_${g.id}">${g.done?`<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`:""}</div><p class="t-h3" style="flex:1;text-decoration:${g.done?"line-through":"none"};color:${g.done?"var(--txt2)":"var(--txt)"}">${g.text}</p><span style="font-size:20px">${g.done?"🏆":"⬜"}</span></div>`).join("")}</div>`;}).join("")}`}
+  </div>`;}
+
+// ── MEMO ────────────────────────────────────
+function memo(){
+  if(S.noteView==="detail"&&S.selNote)return noteDetail();
+  const cn=S.notes.filter(n=>n.certId===S.selCert);
+  const cats=["전체",...new Set(cn.map(n=>n.category||"기타"))];
+  const filtered=S.memoCat==="전체"?cn:cn.filter(n=>(n.category||"기타")===S.memoCat);
+  const byDate=filtered.reduce((acc,n)=>{(acc[n.date]=acc[n.date]||[]).push(n);return acc;},{});
+  const dates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+  return`<div class="page-hd"><div class="page-hd-row"><div><p class="t-label">Flashcards</p><p class="t-title" style="margin-top:4px">암기장</p></div><button class="btn-p btn-sm" data-action="triggerFile">📷 업로드</button></div></div>
+  <div class="sec">
+    ${chips(true)}
+    <input type="file" id="fi" accept="image/*" capture="environment" style="display:none"/>
+    ${!S.selCert?"":
+    `<div class="htabs">${cats.map(c=>`<button class="htab${S.memoCat===c?" on":""}" data-memocat="${c}">${c}</button>`).join("")}</div>
+    ${filtered.length===0?`<div class="card" style="text-align:center;padding:36px"><div style="font-size:50px;margin-bottom:14px">📸</div><p class="t-body" style="color:var(--txt2);margin-bottom:16px;line-height:1.6">공부 사진을 찍으면 AI가 자동으로<br>암기장을 만들어드려요</p><button class="btn-p btn-sm" data-action="triggerFile">📷 사진 업로드</button></div>`:
+    dates.map(date=>`<div style="margin-bottom:6px"><p class="t-label" style="margin-bottom:9px;padding-left:2px">📅 ${fd(date)}</p>
+    ${byDate[date].map(n=>`<div class="split" style="cursor:pointer">
+      <div class="split-img" data-selnote="${n.id}"><div style="position:relative;z-index:1;text-align:center"><div style="font-size:30px;margin-bottom:6px">📝</div><p style="font-size:9px;color:#6B7494;font-weight:600;line-height:1.5">${(n.keyPoints||[]).slice(0,2).map(k=>k.slice(0,14)).join("\n")}</p></div></div>
+      <div class="split-right" data-selnote="${n.id}">
+        <p class="t-h3" style="margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${n.title}</p>
+        <span class="ct ${CC[cats.indexOf(n.category||"기타")%6]}">${n.category||"기타"}</span>
+        <p class="t-caption" style="margin-top:7px">카드 ${n.memo?.length||0}개</p>
+        <div style="display:flex;gap:5px;margin-top:10px">
+          <button class="btn-sm bp" style="font-size:10px" data-editnote="${n.id}">수정</button>
+          <button class="btn-danger" style="font-size:10px" data-delnote="${n.id}">삭제</button>
+        </div>
+      </div>
+    </div>`).join("")}</div>`).join("")}`}
+  </div>`;}
+
+function noteDetail(){
+  const n=S.selNote;
+  return`<div class="page-hd"><button class="back" data-action="backNote">← 목록으로</button><p class="t-title" style="font-size:17px">${n.title}</p><p class="t-caption" style="margin-top:4px">${fd(n.date)} · ${n.category||"기타"}</p></div>
+  <div class="sec">
+    <div class="htabs"><button class="htab${S.noteTab==="note"?" on":""}" data-notetab="note">📋 시각화 노트</button><button class="htab${S.noteTab==="memo"?" on":""}" data-notetab="memo">🧠 암기 메모장</button></div>
+    ${S.noteTab==="note"?`<div class="card"><p class="t-body" style="color:var(--txt2);margin-bottom:16px">${n.summary||""}</p>${(n.keyPoints||[]).map((kp,i)=>`<div class="kp-card"><span class="kp-num">${i+1}</span><span class="t-body" style="color:var(--p-dark)">${kp}</span></div>`).join("")}${n.visualNote?`<div style="background:var(--bg);border-radius:10px;padding:14px;font-size:13px;line-height:1.9;white-space:pre-wrap;margin-top:10px;color:var(--txt2)">${n.visualNote}</div>`:""}</div>`:
+    `<p class="t-caption" style="margin-bottom:12px">💡 카드를 탭해서 정답을 확인해보세요</p>
+    ${(n.memo||[]).map((m,i)=>`<div class="mc${S.memoOpen[n.id+"_"+i]?" open":""}" data-memoflip="${n.id}_${i}">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <span class="t-h3">${m.term}</span>
+        <span class="badge ${S.memoOpen[n.id+"_"+i]?"bg":"bp"}">${S.memoOpen[n.id+"_"+i]?"✓ 확인":"탭해서 확인"}</span>
+      </div>
+      ${S.memoOpen[n.id+"_"+i]?`<p class="t-body" style="color:#065F46;margin-top:10px;border-top:1px solid #6EE7B7;padding-top:10px">${m.def}</p>`:""}
+    </div>`).join("")||`<p class="t-body" style="color:var(--txt2);text-align:center;padding:24px">암기카드가 없어요</p>`}`}
+  </div>`;}
+
+// ── CALENDAR ────────────────────────────────
+function cal(){
+  const y=S.calYear,m=S.calMonth;
+  const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+  const today=td(),cells=[];
+  for(let i=0;i<first;i++)cells.push(0);
+  for(let d=1;d<=days;d++)cells.push(d);
+  const evs=S.selDate?S.calEvents[S.selDate]||[]:[];
+  return`<div class="page-hd"><div class="page-hd-row"><div><p class="t-label">Schedule</p><p class="t-title" style="margin-top:4px">달력</p></div><div style="display:flex;align-items:center;gap:10px"><button class="btn-ghost btn-sm" data-calmove="-1">‹</button><span class="t-h3">${y}년 ${m+1}월</span><button class="btn-ghost btn-sm" data-calmove="1">›</button></div></div></div>
+  <div class="sec">
+    <div class="card" style="padding:16px">
+      <div class="cal-grid">${["일","월","화","수","목","금","토"].map((d,i)=>`<div class="cal-daylbl" style="${i===0?"color:var(--r)":i===6?"color:var(--p)":""}">${d}</div>`).join("")}
+      ${cells.map(d=>{if(!d)return`<div></div>`;const ds=`${y}-${p2(m+1)}-${p2(d)}`;const iT=ds===today,iS=ds===S.selDate,hE=(S.calEvents[ds]||[]).length>0;const dow=new Date(y,m,d).getDay();return`<div class="cal-cell${iT?" today":iS?" sel":""} ${hE?"has":""}" data-calsel="${ds}" style="${iT||iS?"":"color:"+(dow===0?"var(--r)":dow===6?"var(--p)":"var(--txt)")}">${d}</div>`;}).join("")}
+      </div>
+    </div>
+    ${S.selDate?`<div class="card"><div class="card-hd"><p class="card-title">${fd(S.selDate)}</p><button class="btn-p btn-sm" data-action="openCal">＋ 메모</button></div>${evs.length===0?`<p class="t-body" style="color:var(--txt2);padding:4px 0">메모가 없어요. 추가해보세요!</p>`:evs.map(ev=>`<div class="item-row"><span style="font-size:18px">📌</span><p class="t-body" style="flex:1">${ev.text}</p><button class="btn-danger" data-delev="${S.selDate}_${ev.id}">삭제</button></div>`).join("")}</div>`:
+    `<div class="card" style="text-align:center;padding:22px"><p class="t-body" style="color:var(--txt2)">날짜를 탭하면 메모를 추가할 수 있어요</p></div>`}
+  </div>`;}
+
+// ── MODAL ────────────────────────────────────
+function modal(){
+  if(S.modal==="cert")return`<div class="overlay"><div class="modal"><div class="modal-drag"></div><p class="modal-hd">자격증 추가</p><p class="field-lbl" style="margin-top:0">자격증 선택</p><div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">${CLIST.map(c=>`<button class="chip${S._cn===c?" on":""}" data-certname="${c}">${c}</button>`).join("")}</div>${S._cn==="기타"?`<input id="cc" placeholder="자격증명 직접 입력" style="margin-bottom:10px" value="${S._cc||""}"/>`:""}${S._cn?`<p class="field-lbl">시험일 (선택)</p><input type="date" id="cd" style="margin-bottom:18px" value="${S._cd||""}"/>`:"<p style='height:12px'></p>"}<div style="display:flex;gap:8px"><button class="btn-ghost" style="flex:1" data-action="closeModal">취소</button><button class="btn-p" style="flex:2" data-action="addCert">추가하기</button></div></div></div>`;
+
+  if(S.modal==="plan"||S.modal==="editPlan"){const isE=S.modal==="editPlan",ep=isE?S.plans.find(p=>p.id===S.editTarget):null;
+  return`<div class="overlay"><div class="modal"><div class="modal-drag"></div><p class="modal-hd">${isE?"계획 수정":"새 계획 만들기"}</p><p class="field-lbl" style="margin-top:0">날짜</p><input type="date" id="pd" style="margin-bottom:4px" value="${isE?ep?.date||"":td()}"/>
+  <p class="field-lbl">📋 할 내용 & 분량</p>${[0,1,2].map(i=>{const t=isE?ep?.tasks?.[i]:null;return`<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:9px"><input id="t${i}" placeholder="할 내용 ${i+1}" value="${t?.text||""}"/><input id="a${i}" placeholder="분량 (예: 30페이지, 2시간)" value="${t?.amount||""}"/></div>`;}).join("")}
+  <p class="field-lbl">🎯 목표</p>${[0,1,2].map(i=>{const g=isE?ep?.goals?.[i]:null;return`<input id="g${i}" placeholder="목표 ${i+1}" style="margin-bottom:8px" value="${g?.text||""}"/>`;}).join("")}
+  <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-ghost" style="flex:1" data-action="closeModal">취소</button><button class="btn-p" style="flex:2" data-action="${isE?"savePlan":"addPlan"}">${isE?"저장":"추가하기"}</button></div></div></div>`;}
+
+  if(S.modal==="cal")return`<div class="overlay"><div class="modal"><div class="modal-drag"></div><p class="modal-hd">${fd(S.selDate)} 메모</p><textarea id="cm" rows="4" placeholder="메모 내용을 입력하세요" style="margin-bottom:14px"></textarea><div style="display:flex;gap:8px"><button class="btn-ghost" style="flex:1" data-action="closeModal">취소</button><button class="btn-p" style="flex:2" data-action="addCalEvent">추가</button></div></div></div>`;
+
+  if(S.modal==="editNote"){const n=S.selNote;if(!n)return"";
+  return`<div class="overlay"><div class="modal"><div class="modal-drag"></div><p class="modal-hd">노트 수정</p><p class="field-lbl" style="margin-top:0">제목</p><input id="et" value="${n.title}" style="margin-bottom:4px"/><p class="field-lbl">분야</p><input id="ec" value="${n.category||""}" placeholder="예: 운영체제, 네트워크" style="margin-bottom:4px"/><p class="field-lbl">요약</p><textarea id="es" rows="3" style="margin-bottom:4px">${n.summary||""}</textarea><p class="field-lbl">암기 카드 (용어::정의, 줄바꿈 구분)</p><textarea id="em" rows="7" style="margin-bottom:16px">${(n.memo||[]).map(m=>m.term+"::"+m.def).join("\n")}</textarea><div style="display:flex;gap:8px"><button class="btn-ghost" style="flex:1" data-action="closeModal">취소</button><button class="btn-p" style="flex:2" data-action="saveNote">저장</button></div></div></div>`;}
+  return"";}
+
+// ── BIND ────────────────────────────────────
+function bind(){
+  const q=(s,fn)=>document.querySelectorAll(s).forEach(fn);
+  q("[data-tab]",el=>el.addEventListener("click",()=>{S.tab=+el.dataset.tab;r();}));
+  q("[data-selcert]",el=>el.addEventListener("click",()=>{S.selCert=+el.dataset.selcert;S.noteView="list";save();r();}));
+  q("[data-selnote]",el=>el.addEventListener("click",e=>{if(e.target.closest("button"))return;S.selNote=S.notes.find(n=>n.id===+el.dataset.selnote);S.noteView="detail";S.noteTab="note";r();}));
+  q("[data-notetab]",el=>el.addEventListener("click",()=>{S.noteTab=el.dataset.notetab;r();}));
+  q("[data-memocat]",el=>el.addEventListener("click",()=>{S.memoCat=el.dataset.memocat;r();}));
+  q("[data-memoflip]",el=>el.addEventListener("click",()=>{S.memoOpen[el.dataset.memoflip]=!S.memoOpen[el.dataset.memoflip];r();}));
+  q("[data-checktask],[data-todotask]",el=>el.addEventListener("click",()=>{const k=el.dataset.checktask||el.dataset.todotask;const[pid,tid]=k.split("_").map(Number);const p=S.plans.find(p=>p.id===pid);if(!p)return;const t=p.tasks.find(t=>t.id===tid);if(!t)return;t.done=!t.done;save();r();}));
+  q("[data-checkgoal]",el=>el.addEventListener("click",()=>{const[pid,gid]=el.dataset.checkgoal.split("_").map(Number);const p=S.plans.find(p=>p.id===pid);if(!p)return;const g=p.goals.find(g=>g.id===gid);if(!g)return;g.done=!g.done;save();r();}));
+  q("[data-delplan]",el=>el.addEventListener("click",()=>{if(!confirm("이 계획을 삭제할까요?"))return;S.plans=S.plans.filter(p=>p.id!==+el.dataset.delplan);save();r();}));
+  q("[data-editplan]",el=>el.addEventListener("click",()=>{S.modal="editPlan";S.editTarget=+el.dataset.editplan;r();}));
+  q("[data-delnote]",el=>el.addEventListener("click",e=>{e.stopPropagation();if(!confirm("이 노트를 삭제할까요?"))return;S.notes=S.notes.filter(n=>n.id!==+el.dataset.delnote);save();r();}));
+  q("[data-editnote]",el=>el.addEventListener("click",e=>{e.stopPropagation();S.selNote=S.notes.find(n=>n.id===+el.dataset.editnote);S.modal="editNote";r();}));
+  q("[data-calsel]",el=>el.addEventListener("click",()=>{S.selDate=el.dataset.calsel;r();}));
+  q("[data-calmove]",el=>el.addEventListener("click",()=>{S.calMonth+=+el.dataset.calmove;if(S.calMonth>11){S.calMonth=0;S.calYear++;}if(S.calMonth<0){S.calMonth=11;S.calYear--;}r();}));
+  q("[data-delev]",el=>el.addEventListener("click",()=>{const[ds,eid]=el.dataset.delev.split("_");S.calEvents[ds]=(S.calEvents[ds]||[]).filter(e=>e.id!==+eid);save();r();}));
+  q("[data-certname]",el=>el.addEventListener("click",()=>{S._cn=el.dataset.certname;r();}));
+  const fi=document.getElementById("fi");
+  if(fi)fi.addEventListener("change",e=>{if(e.target.files[0])processImage(e.target.files[0]);});
+  q("[data-action]",el=>el.addEventListener("click",()=>{const a=el.dataset.action;
+    if(a==="openCert"){S.modal="cert";S._cn="";S._cc="";S._cd="";r();}
+    if(a==="closeModal"){S.modal=null;S.editTarget=null;r();}
+    if(a==="openPlan"){S.modal="plan";r();}
+    if(a==="triggerFile"){document.getElementById("fi")?.click();}
+    if(a==="openCal"){S.modal="cal";r();}
+    if(a==="backNote"){S.noteView="list";S.selNote=null;r();}
+    if(a==="addCert"){const name=S._cn==="기타"?(document.getElementById("cc")?.value||"").trim():S._cn||"";if(!name)return alert("자격증명을 선택해주세요.");const date=document.getElementById("cd")?.value||"";const id=Date.now();S.certs.push({id,name,examDate:date});S.selCert=id;S.modal=null;save();r();}
+    if(a==="addPlan"){if(!S.selCert)return;const date=document.getElementById("pd")?.value;if(!date)return alert("날짜를 선택해주세요.");const tasks=[0,1,2].map(i=>({id:Date.now()+i,text:(document.getElementById("t"+i)?.value||"").trim(),amount:(document.getElementById("a"+i)?.value||"").trim(),done:false})).filter(t=>t.text);const goals=[0,1,2].map(i=>({id:Date.now()+10+i,text:(document.getElementById("g"+i)?.value||"").trim(),done:false})).filter(g=>g.text);if(!tasks.length)return alert("할 내용을 1개 이상 입력해주세요.");S.plans.push({id:Date.now()+100,certId:S.selCert,date,tasks,goals});S.modal=null;save();r();}
+    if(a==="savePlan"){const p=S.plans.find(pl=>pl.id===S.editTarget);if(!p)return;const date=document.getElementById("pd")?.value;if(!date)return;p.date=date;[0,1,2].forEach(i=>{const txt=(document.getElementById("t"+i)?.value||"").trim();const amt=(document.getElementById("a"+i)?.value||"").trim();if(p.tasks[i]){p.tasks[i].text=txt;p.tasks[i].amount=amt;}else if(txt)p.tasks.push({id:Date.now()+i,text:txt,amount:amt,done:false});});[0,1,2].forEach(i=>{const txt=(document.getElementById("g"+i)?.value||"").trim();if(p.goals[i]){p.goals[i].text=txt;}else if(txt)p.goals.push({id:Date.now()+10+i,text:txt,done:false});});p.tasks=p.tasks.filter(t=>t.text);p.goals=p.goals.filter(g=>g.text);S.modal=null;S.editTarget=null;save();r();}
+    if(a==="addCalEvent"){const txt=document.getElementById("cm")?.value.trim();if(!txt)return;if(!S.calEvents[S.selDate])S.calEvents[S.selDate]=[];S.calEvents[S.selDate].push({id:Date.now(),text:txt});S.modal=null;save();r();}
+    if(a==="saveNote"){const n=S.selNote;if(!n)return;n.title=document.getElementById("et")?.value||n.title;n.category=document.getElementById("ec")?.value||n.category;n.summary=document.getElementById("es")?.value||n.summary;const raw=document.getElementById("em")?.value||"";n.memo=raw.split("\n").map(l=>{const[t,...d]=l.split("::");return{term:t.trim(),def:d.join("::").trim()};}).filter(m=>m.term);S.modal=null;save();r();}
+  }));}
+
+async function processImage(file){
+  if(!S.selCert){alert("먼저 자격증을 선택해주세요.");return;}
+  S.loading=true;S.loadMsg="사진 분석 중...";r();
+  try{
+    const b64=await new Promise((res,rej)=>{const rd=new FileReader();rd.onload=()=>res(rd.result.split(",")[1]);rd.onerror=rej;rd.readAsDataURL(file);});
+    S.loadMsg="AI가 암기장 작성 중...";r();
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,system:`자격증 공부 사진 분석 후 순수 JSON만 반환:\n{"category":"분야명","title":"핵심 제목","summary":"2-3문장 요약","keyPoints":["핵심1","핵심2","핵심3","핵심4"],"visualNote":"마크다운 구조화 노트","memo":[{"term":"용어1","def":"정의1"},{"term":"용어2","def":"정의2"},{"term":"용어3","def":"정의3"},{"term":"용어4","def":"정의4"},{"term":"용어5","def":"정의5"},{"term":"용어6","def":"정의6"}]}`,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},{type:"text",text:"분석해서 JSON으로만 반환하세요."}]}]})});
+    S.loadMsg="저장 중...";r();
+    const data=await resp.json();
+    const raw=data.content?.find(c=>c.type==="text")?.text||"{}";
+    const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim());
+    const newNote={id:Date.now(),certId:S.selCert,date:td(),...parsed};
+    S.notes.push(newNote);S.selNote=newNote;S.noteView="detail";S.noteTab="note";S.tab=4;save();
+  }catch(e){alert("분석 오류가 발생했어요. 인터넷 연결을 확인해주세요.");}
+  S.loading=false;r();
+}
+r();
+</script>
+</body>
+</html>
