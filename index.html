@@ -183,6 +183,9 @@ button:active{transform:scale(.97);}
   <div id="mw"></div>
 </div>
 
+<!-- Hidden file input -->
+<input type="file" id="fileInput" accept="image/*" style="display:none"/>
+
 <script>
 const CLIST=["정보처리기사","정보보안기사","컴퓨터활용능력 1급","SQLD","네트워크관리사","한국사능력검정","기타"];
 const CC=["cc0","cc1","cc2","cc3","cc4","cc5"];
@@ -315,7 +318,6 @@ function memo(){
   return`<div class="page-hd"><div class="page-hd-row"><div><p class="t-label">Flashcards</p><p class="t-title" style="margin-top:4px">암기장</p></div><button class="btn-p btn-sm" data-action="triggerFile">📸 사진</button></div></div>
   <div class="sec">
     ${chips(true)}
-    <input type="file" id="fi" accept="image/*" capture="environment" style="display:none"/>
     ${!S.selCert?"":
     `<div class="htabs">${cats.map(c=>`<button class="htab${S.memoCat===c?" on":""}" data-memocat="${c}">${c}</button>`).join("")}</div>
     ${filtered.length===0?`<div class="card" style="text-align:center;padding:36px"><div style="font-size:50px;margin-bottom:14px">📸</div><p class="t-body" style="color:var(--txt2);margin-bottom:14px">사진을 올려보세요!</p></div>`:
@@ -403,13 +405,12 @@ function bind(){
   q("[data-calsel]",el=>el.addEventListener("click",()=>{S.selDate=el.dataset.calsel;r();}));
   q("[data-calmove]",el=>el.addEventListener("click",()=>{S.calMonth+=+el.dataset.calmove;if(S.calMonth>11){S.calMonth=0;S.calYear++;}if(S.calMonth<0){S.calMonth=11;S.calYear--;}r();}));
   q("[data-delev]",el=>el.addEventListener("click",()=>{const[ds,eid]=el.dataset.delev.split("_");S.calEvents[ds]=(S.calEvents[ds]||[]).filter(e=>e.id!==+eid);save();r();}));
-  const fi=document.getElementById("fi");
-  if(fi)fi.addEventListener("change",e=>{if(e.target.files[0])processImage(e.target.files[0]);});
+  
   q("[data-action]",el=>el.addEventListener("click",()=>{const a=el.dataset.action;
     if(a==="openCert"){S.modal="cert";r();}
     if(a==="closeModal"){S.modal=null;S.editTarget=null;r();}
     if(a==="openPlan"){S.modal="plan";r();}
-    if(a==="triggerFile"){document.getElementById("fi")?.click();}
+    if(a==="triggerFile"){document.getElementById("fileInput").click();}
     if(a==="openCal"){S.modal="cal";r();}
     if(a==="backNote"){S.noteView="list";S.selNote=null;r();}
     if(a==="addCert"){const name=document.getElementById("cc")?.value||"";if(!name)return alert("자격증명을 선택해주세요.");const date=document.getElementById("cd")?.value||null;const id=Date.now();S.certs.push({id,name,examDate:date});S.selCert=id;S.modal=null;save();r();}
@@ -417,24 +418,88 @@ function bind(){
     if(a==="savePlan"){const p=S.plans.find(pl=>pl.id===S.editTarget);if(!p)return;const date=document.getElementById("pd")?.value;if(!date)return;p.date=date;[0,1,2].forEach(i=>{const txt=(document.getElementById(`t${i}`)?.value||"").trim();if(txt&&!p.tasks.find(t=>t.text===txt))p.tasks.push({id:Date.now()+i,text:txt,done:false});});[0,1,2].forEach(i=>{const txt=(document.getElementById(`g${i}`)?.value||"").trim();if(txt&&!p.goals.find(g=>g.text===txt))p.goals.push({id:Date.now()+100+i,text:txt,done:false});});S.modal=null;save();r();}
     if(a==="addCalEvent"){const txt=document.getElementById("cm")?.value.trim();if(!txt)return;if(!S.calEvents[S.selDate])S.calEvents[S.selDate]=[];S.calEvents[S.selDate].push({id:Date.now(),text:txt});S.modal=null;save();r();}
     if(a==="saveNote"){const n=S.selNote;if(!n)return;n.title=document.getElementById("et")?.value||n.title;n.category=document.getElementById("ec")?.value||n.category;save();S.noteView="list";r();}
-  }));}
+  }));
+}
+
+// 파일 입력 이벤트 (한 번만 등록)
+const fileInput=document.getElementById("fileInput");
+fileInput.addEventListener("change",e=>{const file=e.target.files[0];if(file){processImage(file);fileInput.value="";}});
 
 async function processImage(file){
   if(!S.selCert){alert("먼저 자격증을 선택해주세요.");return;}
   S.loading=true;S.loadMsg="사진 분석 중...";r();
   try{
-    const b64=await new Promise((res,rej)=>{const rd=new FileReader();rd.onload=()=>res(rd.result.split(",")[1]);rd.onerror=rej;rd.readAsDataURL(file);});
+    const b64=await new Promise((res,rej)=>{const rd=new FileReader();rd.onload=()=>res(rd.result.split(",")[1]);rd.onerror=()=>rej(new Error("파일 읽기 실패"));rd.readAsDataURL(file);});
     S.loadMsg="AI가 암기장 작성 중...";r();
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":"YOUR_CLAUDE_API_KEY"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type,data:b64}},{type:"text",text:"이 이미지를 분석하고 다음 JSON 형식으로 응답: {\"title\":\"(제목)\",\"category\":\"(카테고리)\",\"summary\":\"(요약)\",\"keyPoints\":[\"점1\",\"점2\",\"점3\"],\"memo\":[{\"term\":\"용어\",\"def\":\"정의\"},...]}"}]}});
+    
+    const apiKey="YOUR_CLAUDE_API_KEY";
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-api-key":apiKey},
+      body:JSON.stringify({
+        model:"claude-3-5-sonnet-20241022",
+        max_tokens:1500,
+        messages:[{
+          role:"user",
+          content:[
+            {type:"image",source:{type:"base64",media_type:file.type,data:b64}},
+            {type:"text",text:"이 이미지를 분석하고 JSON 형식으로 응답하세요:\n{\"title\":\"(제목)\",\"category\":\"(카테고리)\",\"summary\":\"(요약)\",\"keyPoints\":[\"점1\",\"점2\",\"점3\"],\"memo\":[{\"term\":\"용어\",\"def\":\"정의\"}]}"}
+          ]
+        }]
+      })
+    });
+    
+    if(!resp.ok){
+      const errData=await resp.json();
+      throw new Error(errData.error?.message||"API 오류");
+    }
+    
     S.loadMsg="저장 중...";r();
     const data=await resp.json();
-    const raw=data.content?.find(c=>c.type==="text")?.text||"{}";
-    const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim());
-    const newNote={id:Date.now(),certId:S.selCert,date:td(),...parsed};
-    S.notes.push(newNote);S.selNote=newNote;S.noteView="detail";S.noteTab="note";S.tab=4;save();
-  }catch(e){alert("분석 오류가 발생했어요. 인터넷 연결을 확인해주세요.");}
+    
+    if(!data.content||!data.content[0]){
+      throw new Error("응답 형식 오류");
+    }
+    
+    let raw=data.content[0].text||"{}";
+    raw=raw.replace(/```json\n?/g,"").replace(/```\n?/g,"").trim();
+    
+    let parsed;
+    try{
+      parsed=JSON.parse(raw);
+    }catch(e){
+      console.error("JSON 파싱 오류:",e);
+      throw new Error("응답 파싱 실패");
+    }
+    
+    if(!parsed.title){
+      parsed.title=`노트_${new Date().toLocaleDateString("ko-KR")}`;
+    }
+    
+    const newNote={
+      id:Date.now(),
+      certId:S.selCert,
+      date:td(),
+      title:parsed.title||"제목 없음",
+      category:parsed.category||"기타",
+      summary:parsed.summary||"",
+      keyPoints:Array.isArray(parsed.keyPoints)?parsed.keyPoints:[],
+      memo:Array.isArray(parsed.memo)?parsed.memo:[]
+    };
+    
+    S.notes.push(newNote);
+    S.selNote=newNote;
+    S.noteView="detail";
+    S.noteTab="note";
+    S.tab=4;
+    save();
+  }catch(e){
+    console.error("오류:",e);
+    alert("분석 중 오류가 발생했습니다:\n"+e.message);
+  }
   S.loading=false;r();
 }
+
 r();
 </script>
 </body>
